@@ -1,10 +1,8 @@
-# Stock Dictionary Pipeline
+# 주식 용어 사전 파이프라인
 
 국내 주식 뉴스 큐레이션 서비스에서 툴팁으로 사용할 주식 용어 사전을 구축하는 파이프라인입니다.
 
 수집한 금융 용어를 전처리하고, LLM 보조 정제로 카테고리 분류·설명 정규화·중복/별칭 판단·출처 충돌 해결을 수행한 뒤 SQLite 검증본과 Neon/PostgreSQL 업로드 산출물을 생성합니다.
-
-저장소: https://github.com/9990-jangdokdae/dictionary.git
 
 ## 현재 상태
 
