@@ -4,6 +4,21 @@
 
 수집한 금융 용어를 전처리하고, LLM 보조 정제로 카테고리 분류·설명 정규화·중복/별칭 판단·출처 충돌 해결을 수행한 뒤 SQLite 검증본과 Neon/PostgreSQL 업로드 산출물을 생성합니다.
 
+## Neon PostgreSQL 구조
+
+Neon에는 단일 테이블 `stock_terms`로 용어 사전을 저장합니다. 툴팁 조회에 필요한 필드만 포함하고, LLM 판단 메모나 검수 사유는 최종 DB에 저장하지 않습니다.
+
+| 컬럼 | 설명 |
+| --- | --- |
+| `term` | 대표 용어 |
+| `aliases` | 별칭 목록, PostgreSQL에서는 `JSONB` 사용 |
+| `category` | 용어 카테고리 |
+| `definition` | 서비스용 설명 |
+| `source_name` | 대표 출처명 |
+| `source_url` | 대표 출처 URL |
+
+Neon 반영 절차는 [Neon 업로드 절차 문서](docs/upload_to_neon.md)를 참고합니다.
+
 ## 현재 상태
 
 현재 최종 산출물 기준:
