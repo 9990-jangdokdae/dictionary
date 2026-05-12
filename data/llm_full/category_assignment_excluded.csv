@@ -1,0 +1,146 @@
+term,aliases,category,reason,source_name,source_url,notes
+CMA,[],기타,category_gate_excluded,KB증권 금융용어사전,https://www.kbsec.com/go.able?linkcd=m04110000,category is 기타; excluded before downstream LLM stages
+CMA 제휴서비스,[],기타,category_gate_excluded,KB증권 금융용어사전,https://www.kbsec.com/go.able?linkcd=m04110000,category is 기타; excluded before downstream LLM stages
+CMA 투자대상전환,[],기타,category_gate_excluded,KB증권 금융용어사전,https://www.kbsec.com/go.able?linkcd=m04110000,category is 기타; excluded before downstream LLM stages
+CMA 투자상품,[],기타,category_gate_excluded,KB증권 금융용어사전,https://www.kbsec.com/go.able?linkcd=m04110000,category is 기타; excluded before downstream LLM stages
+IMC (IMC (Integrated Marketing Communications )),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+IRP상품 매수/매도,[],기타,category_gate_excluded,iM증권 금융용어사전,https://www.imfnsec.com/research/financial_guide/fg000000.jsp,category is 기타; excluded before downstream LLM stages
+IRP운용손익수수료,[],기타,category_gate_excluded,iM증권 금융용어사전,https://www.imfnsec.com/research/financial_guide/fg000000.jsp,category is 기타; excluded before downstream LLM stages
+IRP이체신청,[],기타,category_gate_excluded,iM증권 금융용어사전,https://www.imfnsec.com/research/financial_guide/fg000000.jsp,category is 기타; excluded before downstream LLM stages
+IRP평가금액,[],기타,category_gate_excluded,iM증권 금융용어사전,https://www.imfnsec.com/research/financial_guide/fg000000.jsp,category is 기타; excluded before downstream LLM stages
+ISA납입기간(의무가입기간),[],기타,category_gate_excluded,iM증권 금융용어사전,https://www.imfnsec.com/research/financial_guide/fg000000.jsp,category is 기타; excluded before downstream LLM stages
+ISA납입한도,[],기타,category_gate_excluded,iM증권 금융용어사전,https://www.imfnsec.com/research/financial_guide/fg000000.jsp,category is 기타; excluded before downstream LLM stages
+ISA손익통산,[],기타,category_gate_excluded,iM증권 금융용어사전,https://www.imfnsec.com/research/financial_guide/fg000000.jsp,category is 기타; excluded before downstream LLM stages
+SEC,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+가중산술평균,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+가중평균,[],기타,category_gate_excluded,iM증권 금융용어사전,https://www.imfnsec.com/research/financial_guide/fg000000.jsp,category is 기타; excluded before downstream LLM stages
+개인형 퇴직연금(IRP),[],기타,category_gate_excluded,iM증권 금융용어사전,https://www.imfnsec.com/research/financial_guide/fg000000.jsp,category is 기타; excluded before downstream LLM stages
+게임이론(game theory),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+경제적 위험(economical risk),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+계좌이체(transfer account),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+계좌통합관리서비스,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+고지의무(duty of disclosure),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+공동행위 제한,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+공제(fraternal insurance),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+과세제외금액,[],기타,category_gate_excluded,iM증권 금융용어사전,https://www.imfnsec.com/research/financial_guide/fg000000.jsp,category is 기타; excluded before downstream LLM stages
+과표(과세표준)금액,[],기타,category_gate_excluded,iM증권 금융용어사전,https://www.imfnsec.com/research/financial_guide/fg000000.jsp,category is 기타; excluded before downstream LLM stages
+구상권,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+국제 팩토링(International factoring),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+권리공탁,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+금융 하이웨이(financial highway),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+금융소득종합과세,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+금융전업가,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+금전신탁,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+기관경고,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+기업연금(corporate pension plan),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+기타소득세,[],기타,category_gate_excluded,iM증권 금융용어사전,https://www.imfnsec.com/research/financial_guide/fg000000.jsp,category is 기타; excluded before downstream LLM stages
+꺾기,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+낙성계약,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+납세담보,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+납입유예기간,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+내국신용장 (local L/C),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+노동 3 법·노동 3 권,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+농지세,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+니치 마케팅(niche marketing),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+니치 시장전략(niche market strategy),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+다국적기업(multinational firm),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+다국적은행(multinational bank),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+담보보증의무 면제특약,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+대리수령,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+대리인이론(agency theory),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+대여금고,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+도덕적 위험(moral hazard),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+리딩 뱅크(leading bank),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+리스 산업(lease industry),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+마이그레이션 (migra-tion),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+머천트 뱅크(merchant bank),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+명의신탁,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+배서금지배서,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+백업 퍼실리티(back-up facility),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+백지어음,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+법정지상권,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+벤치 마킹(bench marking),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+별단예금(special deposit),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+보상예금(compensating balance),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+복리계수(compound interest factor),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+부담금투자비율,[],기타,category_gate_excluded,iM증권 금융용어사전,https://www.imfnsec.com/research/financial_guide/fg000000.jsp,category is 기타; excluded before downstream LLM stages
+부당권유행위금지,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+부당행위금지,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+부동산개발신탁,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+부동산담보신탁,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+부동산신탁,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+분리과세,[],기타,category_gate_excluded,iM증권 금융용어사전,https://www.imfnsec.com/research/financial_guide/fg000000.jsp,category is 기타; excluded before downstream LLM stages
+비거주자,[],기타,category_gate_excluded,iM증권 금융용어사전,https://www.imfnsec.com/research/financial_guide/fg000000.jsp,category is 기타; excluded before downstream LLM stages
+사전지정운영제도(디폴트옵션),[],기타,category_gate_excluded,iM증권 금융용어사전,https://www.imfnsec.com/research/financial_guide/fg000000.jsp,category is 기타; excluded before downstream LLM stages
+산술평균,[],기타,category_gate_excluded,iM증권 금융용어사전,https://www.imfnsec.com/research/financial_guide/fg000000.jsp,category is 기타; excluded before downstream LLM stages
+생명보험회사(life insurance company),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+생보 모집인,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+선관주의임무,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+선하증권(B/L; bill of landing),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+설립등기(establishment foundation),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+세액공제,[],기타,category_gate_excluded,iM증권 금융용어사전,https://www.imfnsec.com/research/financial_guide/fg000000.jsp,category is 기타; excluded before downstream LLM stages
+소급과세금지원칙,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+소득공제,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+손해배상대위,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+수시식 발행어음,[],기타,category_gate_excluded,KB증권 금융용어사전,https://www.kbsec.com/go.able?linkcd=m04110000,category is 기타; excluded before downstream LLM stages
+시세조종행위(manipulation),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+신클라이언트 (Thin Client ),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+신탁대금대출,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+실지명의,[],기타,category_gate_excluded,iM증권 금융용어사전,https://www.imfnsec.com/research/financial_guide/fg000000.jsp,category is 기타; excluded before downstream LLM stages
+악재(unfavorable factor),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+양건예금,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+양도소득세,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+연계보증,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+연금소득세,[],기타,category_gate_excluded,iM증권 금융용어사전,https://www.imfnsec.com/research/financial_guide/fg000000.jsp,category is 기타; excluded before downstream LLM stages
+연금저축,[],기타,category_gate_excluded,iM증권 금융용어사전,https://www.imfnsec.com/research/financial_guide/fg000000.jsp,category is 기타; excluded before downstream LLM stages
+연체대출,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+예금보험제도(deposit insurance),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+예대상계,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+은행신탁계정,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+임의규정,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+자산 3분법,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+재보험(reinsurance),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+재테크,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+쟁의조정위원회(disputes mediating committee),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+적립IRP계좌,[],기타,category_gate_excluded,iM증권 금융용어사전,https://www.imfnsec.com/research/financial_guide/fg000000.jsp,category is 기타; excluded before downstream LLM stages
+전사적자원관리 (ERP (enterprise resources planning )),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+점유개정,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+제 1차 금속,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+제권판결(judgement of nullification),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+제척기간,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+제한적 해석의 원칙,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+조건부 융자제도,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+종합 과세,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+종합금융회사(merchant bank),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+종합토지세,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+주가조작(manipulation),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+주거래은행,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+증권 감독원,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+증권 거래법,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+증권 분석사,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+증권 외무원,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+카리브 금융센터(Carribean financial centers),[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+타행환시스템,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+택스 헤이븐,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+택지소유상한제,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+턴 오버(turn over) 현상,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+턴 키 베이스 방식,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+토지거래 허가제,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+토지초과이득세,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+퇴직IRP계좌,[],기타,category_gate_excluded,iM증권 금융용어사전,https://www.imfnsec.com/research/financial_guide/fg000000.jsp,category is 기타; excluded before downstream LLM stages
+퇴직소득세/연금소득세,[],기타,category_gate_excluded,iM증권 금융용어사전,https://www.imfnsec.com/research/financial_guide/fg000000.jsp,category is 기타; excluded before downstream LLM stages
+투자금융회사,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+트레이딩룸,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+파이낸셜 플래너,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+패러다임 경영,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+편무계약,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+포괄여신한도제,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+프로젝트 파이낸스,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+한계세율,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+한국산업은행,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+한국증권금융㈜,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+한국증권전산주식회사,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+할부금융회사,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+현지금융,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+협조융자,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages
+확정 배당금,[],기타,category_gate_excluded,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,category is 기타; excluded before downstream LLM stages

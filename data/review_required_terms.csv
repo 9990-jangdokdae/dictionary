@@ -1,0 +1,21 @@
+term,aliases,category,reason,source_name,source_url,notes
+공매,[],거래/주문/결제,llm_definition_uncertain,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,definition_rewrite returned uncertain decision
+롱 포지션(long position),[],거래/주문/결제,llm_definition_uncertain,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,definition_rewrite returned uncertain decision
+리드 앤 랙(leads and lags),[],채권/금리/환율,llm_definition_uncertain,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,definition_rewrite returned uncertain decision
+무액면주,[],시장/상장,llm_definition_uncertain,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,definition_rewrite returned uncertain decision
+무위험수익률,[],채권/금리/환율,llm_definition_uncertain,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,definition_rewrite returned uncertain decision
+보유비용,[],파생/구조화상품,llm_definition_uncertain,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,definition_rewrite returned uncertain decision
+보증 채권,[],채권/금리/환율,llm_definition_uncertain,KB증권 금융용어사전,https://www.kbsec.com/go.able?linkcd=m04110000,definition_rewrite returned uncertain decision
+보호예수,[],공시/기업행위,llm_definition_uncertain,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,definition_rewrite returned uncertain decision
+선물환 스왑거래(forward swap transaction),[],파생/구조화상품,llm_definition_uncertain,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,definition_rewrite returned uncertain decision
+쇼트 포지션(short position),[],거래/주문/결제,llm_definition_uncertain,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,definition_rewrite returned uncertain decision
+순수이자율,[],채권/금리/환율,llm_definition_uncertain,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,definition_rewrite returned uncertain decision
+연개 매매,[],거래/주문/결제,llm_definition_uncertain,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,definition_rewrite returned uncertain decision
+연대채무,[],수급/투자자,llm_definition_uncertain,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,definition_rewrite returned uncertain decision
+재무성증권(treasury bond),[],채권/금리/환율,llm_definition_uncertain,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,definition_rewrite returned uncertain decision
+재정평가 모델(APM; arbitrage pricing model),[],투자지표/밸류에이션,llm_definition_uncertain,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,definition_rewrite returned uncertain decision
+재할인율,[],채권/금리/환율,llm_definition_uncertain,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,definition_rewrite returned uncertain decision
+조정수익,[],채권/금리/환율,llm_definition_uncertain,KB증권 금융용어사전,https://www.kbsec.com/go.able?linkcd=m04110000,definition_rewrite returned uncertain decision
+표시채권,[],채권/금리/환율,llm_definition_uncertain,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,definition_rewrite returned uncertain decision
+하락쐐기형,[],가격/차트,llm_definition_uncertain,미래에셋증권 증권용어사전,https://securities.miraeasset.com/hki/hki3028/r01.do,definition_rewrite returned uncertain decision
+매출,[],재무/회계,llm_source_conflict_uncertain,multiple,multiple,source_conflict_resolution returned uncertain decision
