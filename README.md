@@ -60,9 +60,10 @@ flowchart LR
 │   ├── schema.postgres.sql
 │   ├── seed_terms.csv
 │   ├── seed_terms.sql
-│   ├── upload_to_neon.md
+│   └── upload_to_neon.md
+├── docs/
+│   ├── stock_dictionary_prd.md
 │   └── migration_to_neon.md
-├── stock_dictionary_prd.md
 ├── Agent.md
 ├── pyproject.toml
 └── uv.lock
@@ -150,7 +151,8 @@ uv run pytest -q
 | `output/seed_terms.csv` | Neon/PostgreSQL 기본 적재 CSV |
 | `output/seed_terms.sql` | CSV 적재가 어려운 경우 사용할 보조 SQL |
 | `output/upload_to_neon.md` | Neon 업로드 절차 문서 |
-| `output/migration_to_neon.md` | SQLite 검증 결과를 Neon으로 이관하는 기준 문서 |
+| `docs/migration_to_neon.md` | SQLite 검증 결과를 Neon으로 이관하는 기준 문서 |
+| `docs/stock_dictionary_prd.md` | 주식 용어 사전 구축 요구사항 문서 |
 | `data/review_required_terms.csv` | 자동 반영하지 않은 검수 후보 |
 | `data/category_excluded_terms.csv` | 카테고리 게이트에서 제외한 항목 |
 | `data/llm_full/*.csv` | 전체 LLM 단계별 실행 로그 |
