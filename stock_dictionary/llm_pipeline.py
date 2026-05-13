@@ -9,6 +9,7 @@ from langchain_core.output_parsers import JsonOutputParser
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 from typing_extensions import Literal
 
+from stock_dictionary.augmentation import PROJECT_SOURCE_NAME, PROJECT_SOURCE_URL
 from stock_dictionary.models import ReviewRequiredTerm
 from stock_dictionary.models import CleanedTerm, RawTerm
 
@@ -19,6 +20,7 @@ LLMTaskName = Literal[
     "duplicate_alias_judgment",
     "category_assignment",
     "source_conflict_resolution",
+    "term_augmentation",
 ]
 
 TASK_THINKING_LEVELS: dict[LLMTaskName, ThinkingLevel] = {
@@ -26,6 +28,7 @@ TASK_THINKING_LEVELS: dict[LLMTaskName, ThinkingLevel] = {
     "duplicate_alias_judgment": "medium",
     "category_assignment": "minimal",
     "source_conflict_resolution": "high",
+    "term_augmentation": "medium",
 }
 
 THINKING_LEVEL_ENV_VARS: dict[LLMTaskName, str] = {
@@ -33,6 +36,7 @@ THINKING_LEVEL_ENV_VARS: dict[LLMTaskName, str] = {
     "duplicate_alias_judgment": "DUPLICATE_ALIAS_JUDGMENT_THINKING_LEVEL",
     "category_assignment": "CATEGORY_ASSIGNMENT_THINKING_LEVEL",
     "source_conflict_resolution": "SOURCE_CONFLICT_RESOLUTION_THINKING_LEVEL",
+    "term_augmentation": "TERM_AUGMENTATION_THINKING_LEVEL",
 }
 
 VALID_THINKING_LEVELS = {"minimal", "low", "medium", "high"}
@@ -95,6 +99,25 @@ class SourceConflictResolutionOutput(StrictOutputModel):
             if not self.representative_source_id.strip():
                 raise ValueError("representative_source_id is required when decision is resolved")
         return self
+
+
+class TermAugmentationCandidateOutput(StrictOutputModel):
+    term: str
+    aliases: list[str] = Field(default_factory=list)
+    category: CategoryName
+    definition: str
+
+    @model_validator(mode="after")
+    def _required_text_fields(self) -> "TermAugmentationCandidateOutput":
+        if not self.term.strip():
+            raise ValueError("term is required")
+        if not self.definition.strip():
+            raise ValueError("definition is required")
+        return self
+
+
+class TermAugmentationOutput(StrictOutputModel):
+    terms: list[TermAugmentationCandidateOutput] = Field(default_factory=list)
 
 
 T = TypeVar("T", bound=BaseModel)
@@ -259,6 +282,41 @@ def build_source_conflict_prompt(
     )
 
 
+def build_term_augmentation_prompt(
+    seed_terms: list[CleanedTerm],
+    existing_samples: list[CleanedTerm],
+    target_categories: list[str],
+    max_extra_terms_per_category: int = 5,
+    prompt_path: str | Path = "prompts/term_augmentation.md",
+) -> str:
+    prompt_template = Path(prompt_path).read_text(encoding="utf-8")
+    seed_lines = _term_input_lines("seed_terms", seed_terms)
+    sample_lines = _term_input_lines("existing_samples", existing_samples)
+    return (
+        f"{prompt_template}\n\n"
+        "Input:\n"
+        f"target_categories: {target_categories}\n"
+        f"max_extra_terms_per_category: {max_extra_terms_per_category}\n"
+        f"{seed_lines}\n"
+        f"{sample_lines}\n\n"
+        'Return JSON with key "terms".'
+    )
+
+
+def _term_input_lines(label: str, terms: list[CleanedTerm]) -> str:
+    lines = [f"{label}:"]
+    for term in terms:
+        lines.extend(
+            [
+                f"- term: {term.term}",
+                f"  aliases: {term.aliases}",
+                f"  category: {term.category}",
+                f"  definition: {term.definition}",
+            ]
+        )
+    return "\n".join(lines)
+
+
 def rewrite_definition_with_llm(
     term: CleanedTerm,
     llm=None,
@@ -303,6 +361,60 @@ def rewrite_definition_with_llm(
             notes="definition_rewrite returned uncertain decision",
         )
     return term.model_copy(update={"definition": result.definition}), None
+
+
+def augment_terms_with_llm(
+    seed_terms: list[CleanedTerm],
+    existing_samples: list[CleanedTerm],
+    target_categories: list[str],
+    max_extra_terms_per_category: int = 5,
+    llm=None,
+    runner: LLMJsonRunner | None = None,
+) -> tuple[list[CleanedTerm] | None, ReviewRequiredTerm | None]:
+    fallback_llm = None
+    if llm is None:
+        llm = init_dictionary_llm(task="term_augmentation")
+        fallback_llm = init_fallback_dictionary_llm(task="term_augmentation")
+    runner = runner or LLMJsonRunner()
+    prompt = build_term_augmentation_prompt(
+        seed_terms=seed_terms,
+        existing_samples=existing_samples,
+        target_categories=target_categories,
+        max_extra_terms_per_category=max_extra_terms_per_category,
+    )
+
+    def invoke(_: int) -> str:
+        try:
+            return _invoke_llm(llm, prompt)
+        except Exception:
+            if fallback_llm is None:
+                raise
+            return _invoke_llm(fallback_llm, prompt)
+
+    result, review = runner.run(
+        TermAugmentationOutput,
+        invoke,
+        review_context={
+            "term": "term_augmentation",
+            "aliases": [],
+            "category": "주식 기초",
+            "source_name": PROJECT_SOURCE_NAME,
+            "source_url": PROJECT_SOURCE_URL,
+        },
+    )
+    if result is None:
+        return None, review
+    return [
+        CleanedTerm(
+            term=term.term,
+            aliases=term.aliases,
+            category=term.category,
+            definition=term.definition,
+            source_name=PROJECT_SOURCE_NAME,
+            source_url=PROJECT_SOURCE_URL,
+        )
+        for term in result.terms
+    ], None
 
 
 def judge_duplicate_alias_with_llm(

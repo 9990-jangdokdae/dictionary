@@ -2,7 +2,7 @@
 
 국내 주식 뉴스 큐레이션 서비스에서 툴팁으로 사용할 주식 용어 사전을 구축하는 파이프라인입니다.
 
-수집한 금융 용어를 전처리하고, LLM 보조 정제로 카테고리 분류·설명 정규화·중복/별칭 판단·출처 충돌 해결을 수행한 뒤 SQLite 검증본과 Neon/PostgreSQL 업로드 산출물을 생성합니다.
+수집한 금융 용어를 전처리하고, LLM 보조 정제로 카테고리 분류·설명 정규화·중복/별칭 판단·출처 충돌 해결·뉴스 핵심 용어 보강을 수행한 뒤 SQLite 검증본과 Neon/PostgreSQL 업로드 산출물을 생성합니다.
 
 ## Neon PostgreSQL 구조
 
@@ -35,7 +35,8 @@ flowchart LR
     A["용어 사전 출처"] --> B["raw_terms.csv"]
     B --> C["규칙 기반 전처리"]
     C --> D["LLM 보조 정제"]
-    D --> E["cleaned_terms.csv"]
+    D --> H["뉴스 핵심 용어 보강"]
+    H --> E["cleaned_terms.csv"]
     E --> F["SQLite 검증"]
     E --> G["PostgreSQL / Neon 산출물"]
 ```
@@ -54,6 +55,7 @@ flowchart LR
 .
 ├── stock_dictionary/              # 파이프라인 공용 모듈
 │   ├── models.py                  # CSV 행 계약
+│   ├── augmentation.py            # 뉴스 핵심 용어 보강 검증/병합
 │   ├── preprocess.py              # 정규화, 카테고리 게이트
 │   ├── scrapers.py                # Scrapling 기반 수집기
 │   ├── llm_pipeline.py            # LangChain JSON/Pydantic LLM 작업
@@ -67,6 +69,7 @@ flowchart LR
 ├── data/
 │   ├── raw_terms.csv              # 수집 원천 데이터
 │   ├── cleaned_terms.csv          # 최종 DB 입력 데이터
+│   ├── term_augmentation_seed.csv # 사람이 관리하는 필수 보강 시드
 │   ├── review_required_terms.csv  # 검수 후보
 │   ├── category_excluded_terms.csv
 │   └── llm_full/                  # 전체 LLM 실행 로그
@@ -143,6 +146,7 @@ uv run python scripts/run_llm_samples.py --task category_assignment --parallelis
 uv run python scripts/run_llm_samples.py --task duplicate_alias_judgment --parallelism 100 --data-dir data --output-dir data/llm_full --input-csv data/llm_full/category_assignment_results.csv
 uv run python scripts/run_llm_samples.py --task definition_rewrite --parallelism 100 --data-dir data --output-dir data/llm_full --input-csv data/llm_full/category_assignment_results.csv
 uv run python scripts/run_llm_samples.py --task source_conflict_resolution --parallelism 100 --data-dir data --output-dir data/llm_full --input-csv data/llm_full/definition_rewrite_results.csv --raw-csv data/raw_terms.csv
+uv run python scripts/run_llm_samples.py --task term_augmentation --parallelism 1 --data-dir data --output-dir data/llm_full --input-csv data/llm_full/definition_rewrite_results.csv --seed-csv data/term_augmentation_seed.csv --max-extra-terms-per-category 5
 ```
 
 LLM 결과를 기준으로 최종 산출물 생성:

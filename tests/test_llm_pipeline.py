@@ -4,11 +4,14 @@ from stock_dictionary.llm_pipeline import (
     DuplicateAliasJudgmentOutput,
     LLMJsonRunner,
     SourceConflictResolutionOutput,
+    TermAugmentationOutput,
+    augment_terms_with_llm,
     assign_category_with_llm,
     build_category_assignment_prompt,
     build_definition_prompt,
     build_duplicate_alias_prompt,
     build_source_conflict_prompt,
+    build_term_augmentation_prompt,
     judge_duplicate_alias_with_llm,
     resolve_source_conflict_with_llm,
     ReviewRequiredTerm,
@@ -140,6 +143,22 @@ def test_init_dictionary_llm_uses_task_specific_thinking_level(monkeypatch):
     init_dictionary_llm(task="source_conflict_resolution")
 
     assert captured["thinking_level"] == "high"
+
+
+def test_init_dictionary_llm_uses_term_augmentation_thinking_level(monkeypatch):
+    captured = {}
+
+    def fake_init_chat_model(model, **kwargs):
+        captured["model"] = model
+        captured.update(kwargs)
+        return object()
+
+    monkeypatch.setenv("MAIN_MODEL", "gemini-3-flash")
+    monkeypatch.setattr("stock_dictionary.llm_pipeline.init_chat_model", fake_init_chat_model)
+
+    init_dictionary_llm(task="term_augmentation")
+
+    assert captured["thinking_level"] == "medium"
 
 
 def test_init_dictionary_llm_uses_env_thinking_level_override(monkeypatch):
@@ -351,6 +370,99 @@ def test_build_source_conflict_prompt_uses_source_name_and_definition_without_ur
     assert "definition: 주가를 주당순이익으로 나눈 지표" in prompt
     assert "https://example.com/kb" not in prompt
     assert '"decision", "recommended_definition", and "representative_source_id"' in prompt
+
+
+def test_build_term_augmentation_prompt_uses_seed_samples_and_limits(tmp_path):
+    prompt_file = tmp_path / "term_augmentation.md"
+    prompt_file.write_text("Augment prompt", encoding="utf-8")
+    seed_terms = [
+        CleanedTerm(
+            term="YoY",
+            aliases=["Year on Year"],
+            category="리포트/실적 표현",
+            definition="전년 같은 기간과 비교한 증감률",
+            source_name="장독대 주식 용어 사전",
+            source_url="https://example.com/prd",
+        )
+    ]
+    existing_samples = [
+        CleanedTerm(
+            term="PER",
+            aliases=["주가수익비율"],
+            category="투자지표/밸류에이션",
+            definition="주가를 주당순이익으로 나눈 지표",
+            source_name="KB증권 금융용어사전",
+            source_url="https://example.com/per",
+        )
+    ]
+
+    prompt = build_term_augmentation_prompt(
+        seed_terms,
+        existing_samples,
+        target_categories=["주식 기초", "리포트/실적 표현"],
+        max_extra_terms_per_category=5,
+        prompt_path=prompt_file,
+    )
+
+    assert "seed_terms:" in prompt
+    assert "term: YoY" in prompt
+    assert "existing_samples:" in prompt
+    assert "term: PER" in prompt
+    assert "target_categories: ['주식 기초', '리포트/실적 표현']" in prompt
+    assert "max_extra_terms_per_category: 5" in prompt
+    assert '"terms"' in prompt
+    assert "https://example.com/per" not in prompt
+
+
+def test_augment_terms_with_llm_returns_cleaned_terms_with_project_source():
+    class FakeLLM:
+        def invoke(self, prompt):
+            return (
+                '{"terms":[{"term":"YoY","aliases":["Year on Year","전년 동기 대비"],'
+                '"category":"리포트/실적 표현","definition":"YoY는 전년 같은 기간과 비교한 증감률입니다."}]}'
+            )
+
+    seed_terms = [
+        CleanedTerm(
+            term="YoY",
+            aliases=[],
+            category="리포트/실적 표현",
+            definition="전년 같은 기간과 비교",
+            source_name="장독대 주식 용어 사전",
+            source_url="https://example.com/prd",
+        )
+    ]
+
+    terms, review = augment_terms_with_llm(
+        seed_terms=seed_terms,
+        existing_samples=[],
+        target_categories=["리포트/실적 표현"],
+        llm=FakeLLM(),
+    )
+
+    assert review is None
+    assert terms is not None
+    assert terms[0].term == "YoY"
+    assert terms[0].aliases == ["Year on Year", "전년 동기 대비"]
+    assert terms[0].source_name == "장독대 주식 용어 사전"
+
+
+def test_term_augmentation_output_rejects_unknown_category():
+    result, review = LLMJsonRunner(max_retries=0).run(
+        TermAugmentationOutput,
+        lambda attempt: '{"terms":[{"term":"테스트","aliases":[],"category":"뉴스 표현","definition":"설명"}]}',
+        review_context={
+            "term": "term_augmentation",
+            "aliases": [],
+            "category": "주식 기초",
+            "source_name": "장독대 주식 용어 사전",
+            "source_url": "https://example.com/prd",
+        },
+    )
+
+    assert result is None
+    assert review is not None
+    assert review.reason == "llm_json_validation_failed"
 
 
 def test_resolve_source_conflict_with_llm_returns_resolution_with_fake_llm():

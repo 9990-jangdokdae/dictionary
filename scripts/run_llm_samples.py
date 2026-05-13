@@ -17,18 +17,28 @@ from dotenv import load_dotenv
 from stock_dictionary.llm_pipeline import (
     DuplicateAliasJudgmentOutput,
     SourceConflictResolutionOutput,
+    augment_terms_with_llm,
     assign_category_with_llm,
     judge_duplicate_alias_with_llm,
     resolve_source_conflict_with_llm,
     rewrite_definition_with_llm,
 )
 from stock_dictionary.models import CleanedTerm, RawTerm, ReviewRequiredTerm
+from stock_dictionary.augmentation import (
+    AUGMENTATION_TARGET_CATEGORIES,
+    load_term_augmentation_seed,
+    validate_augmented_terms,
+)
 from stock_dictionary.preprocess import apply_category_gate, clean_display_term, clean_raw_terms, normalize_term, write_cleaned_terms
 
 
 CategoryAssigner = Callable[[CleanedTerm], tuple[CleanedTerm | None, ReviewRequiredTerm | None]]
 DuplicateAliasJudger = Callable[[list[CleanedTerm]], tuple[DuplicateAliasJudgmentOutput | None, ReviewRequiredTerm | None]]
 DefinitionRewriter = Callable[[CleanedTerm], tuple[CleanedTerm | None, ReviewRequiredTerm | None]]
+TermAugmenter = Callable[
+    [list[CleanedTerm], list[CleanedTerm], list[str], int],
+    tuple[list[CleanedTerm] | None, ReviewRequiredTerm | None],
+]
 SourceConflictGroup = tuple[str, str, list[RawTerm]]
 SourceConflictResolver = Callable[
     [str, list[RawTerm], str],
@@ -169,6 +179,46 @@ def run_definition_rewrite_samples(
                 reviews.append((index, review))
 
     return [row for row in results if row is not None], [review for _, review in sorted(reviews, key=lambda item: item[0])]
+
+
+def select_existing_samples_by_category(
+    rows: list[CleanedTerm],
+    target_categories: list[str],
+    per_category: int = 10,
+) -> list[CleanedTerm]:
+    selected: list[CleanedTerm] = []
+    counts: dict[str, int] = defaultdict(int)
+    for row in rows:
+        if row.category not in target_categories:
+            continue
+        if counts[row.category] >= per_category:
+            continue
+        selected.append(row)
+        counts[row.category] += 1
+    return selected
+
+
+def run_term_augmentation_samples(
+    existing_rows: list[CleanedTerm],
+    seed_terms: list[CleanedTerm],
+    target_categories: list[str] = AUGMENTATION_TARGET_CATEGORIES,
+    max_extra_terms_per_category: int = 5,
+    existing_sample_per_category: int = 10,
+    augmenter: TermAugmenter = augment_terms_with_llm,
+) -> tuple[list[CleanedTerm], list[CleanedTerm], list[ReviewRequiredTerm]]:
+    existing_samples = select_existing_samples_by_category(
+        existing_rows,
+        target_categories=target_categories,
+        per_category=existing_sample_per_category,
+    )
+    raw_results, review = augmenter(seed_terms, existing_samples, target_categories, max_extra_terms_per_category)
+    reviews = [review] if review is not None else []
+    if raw_results is None:
+        return [], [], reviews
+
+    results, validation_reviews = validate_augmented_terms(raw_results, existing_rows)
+    reviews.extend(validation_reviews)
+    return raw_results, results, reviews
 
 
 def generate_source_conflict_groups(cleaned_rows: list[CleanedTerm], raw_rows: list[RawTerm]) -> list[SourceConflictGroup]:
@@ -334,7 +384,13 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--task",
-        choices=["category_assignment", "duplicate_alias_judgment", "definition_rewrite", "source_conflict_resolution"],
+        choices=[
+            "category_assignment",
+            "duplicate_alias_judgment",
+            "definition_rewrite",
+            "source_conflict_resolution",
+            "term_augmentation",
+        ],
         default="category_assignment",
     )
     parser.add_argument("--limit", type=int, default=None)
@@ -343,6 +399,9 @@ def main() -> None:
     parser.add_argument("--output-dir", default="data/llm_samples")
     parser.add_argument("--input-csv", default=None)
     parser.add_argument("--raw-csv", default=None)
+    parser.add_argument("--seed-csv", default=None)
+    parser.add_argument("--max-extra-terms-per-category", type=int, default=5)
+    parser.add_argument("--existing-sample-per-category", type=int, default=10)
     args = parser.parse_args()
 
     load_dotenv()
@@ -360,7 +419,8 @@ def main() -> None:
         )
         return
 
-    input_csv = Path(args.input_csv) if args.input_csv else output_dir / "category_assignment_results.csv"
+    default_input = output_dir / "definition_rewrite_results.csv" if args.task == "term_augmentation" else output_dir / "category_assignment_results.csv"
+    input_csv = Path(args.input_csv) if args.input_csv else default_input
     rows = load_cleaned_terms(input_csv)
 
     if args.task == "duplicate_alias_judgment":
@@ -385,6 +445,24 @@ def main() -> None:
         print(
             f"task={args.task} input_terms={len(selected_rows)} groups={len(groups)} "
             f"results={len(results)} reviews={len(reviews)} parallelism={args.parallelism}"
+        )
+        return
+
+    if args.task == "term_augmentation":
+        seed_csv = Path(args.seed_csv) if args.seed_csv else data_dir / "term_augmentation_seed.csv"
+        seed_terms = load_term_augmentation_seed(seed_csv)
+        raw_results, results, reviews = run_term_augmentation_samples(
+            rows,
+            seed_terms,
+            max_extra_terms_per_category=args.max_extra_terms_per_category,
+            existing_sample_per_category=args.existing_sample_per_category,
+        )
+        write_cleaned_terms(output_dir / "term_augmentation_raw.csv", raw_results)
+        write_cleaned_terms(output_dir / "term_augmentation_results.csv", results)
+        write_review_terms(output_dir / "term_augmentation_review.csv", reviews)
+        print(
+            f"task={args.task} input_terms={len(rows)} seeds={len(seed_terms)} raw={len(raw_results)} "
+            f"results={len(results)} reviews={len(reviews)} max_extra_terms_per_category={args.max_extra_terms_per_category}"
         )
         return
 

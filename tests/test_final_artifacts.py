@@ -104,3 +104,64 @@ def test_build_final_artifacts_normalizes_aliases_and_merges_duplicate_terms(tmp
         aliases = conn.execute("SELECT aliases FROM stock_terms WHERE term = '감자'").fetchone()[0]
     assert count == 1
     assert aliases == '["reduction of capital"]'
+
+
+def test_build_final_artifacts_merges_term_augmentation_results(tmp_path):
+    data_dir = tmp_path / "data"
+    output_dir = tmp_path / "output"
+    samples_dir = data_dir / "llm_samples"
+    samples_dir.mkdir(parents=True)
+
+    (samples_dir / "definition_rewrite_results.csv").write_text(
+        "term,aliases,category,definition,source_name,source_url\n"
+        "PER,[],투자지표/밸류에이션,PER 설명,KB증권 금융용어사전,https://example.com/per\n",
+        encoding="utf-8",
+    )
+    (samples_dir / "source_conflict_resolution_results.csv").write_text(
+        "term,decision,recommended_definition,representative_source_id,representative_source_name,representative_source_url,source_count\n",
+        encoding="utf-8",
+    )
+    (samples_dir / "term_augmentation_results.csv").write_text(
+        "term,aliases,category,definition,source_name,source_url\n"
+        'YoY,"[""Year on Year"",""전년 동기 대비""]",리포트/실적 표현,YoY 설명,장독대 주식 용어 사전,https://example.com/prd\n',
+        encoding="utf-8",
+    )
+
+    terms = build_final_artifacts(data_dir=data_dir, output_dir=output_dir, samples_dir=samples_dir)
+
+    assert [term.term for term in terms] == ["PER", "YoY"]
+    with sqlite3.connect(output_dir / "stock_dictionary.sqlite") as conn:
+        count = conn.execute("SELECT COUNT(*) FROM stock_terms").fetchone()[0]
+        yoy = conn.execute("SELECT aliases FROM stock_terms WHERE term = 'YoY'").fetchone()[0]
+    assert count == 2
+    assert yoy == '["Year on Year", "전년 동기 대비"]'
+
+
+def test_build_final_artifacts_writes_augmentation_merge_review_for_invalid_rows(tmp_path):
+    data_dir = tmp_path / "data"
+    output_dir = tmp_path / "output"
+    samples_dir = data_dir / "llm_samples"
+    samples_dir.mkdir(parents=True)
+
+    (samples_dir / "definition_rewrite_results.csv").write_text(
+        "term,aliases,category,definition,source_name,source_url\n"
+        "PER,[],투자지표/밸류에이션,PER 설명,KB증권 금융용어사전,https://example.com/per\n",
+        encoding="utf-8",
+    )
+    (samples_dir / "source_conflict_resolution_results.csv").write_text(
+        "term,decision,recommended_definition,representative_source_id,representative_source_name,representative_source_url,source_count\n",
+        encoding="utf-8",
+    )
+    (samples_dir / "term_augmentation_results.csv").write_text(
+        "term,aliases,category,definition,source_name,source_url\n"
+        "PER,[],투자지표/밸류에이션,중복 설명,장독대 주식 용어 사전,https://example.com/prd\n",
+        encoding="utf-8",
+    )
+
+    terms = build_final_artifacts(data_dir=data_dir, output_dir=output_dir, samples_dir=samples_dir)
+
+    assert [term.term for term in terms] == ["PER"]
+    with (data_dir / "term_augmentation_merge_review.csv").open(encoding="utf-8", newline="") as f:
+        rows = list(csv.DictReader(f))
+    assert rows[0]["term"] == "PER"
+    assert rows[0]["reason"] == "term_augmentation_duplicate"

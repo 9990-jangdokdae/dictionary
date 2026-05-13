@@ -8,7 +8,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from stock_dictionary.exporters import build_sqlite, export_postgres_artifacts
-from stock_dictionary.models import CleanedTerm
+from stock_dictionary.augmentation import merge_augmented_terms
+from stock_dictionary.models import CleanedTerm, ReviewRequiredTerm
 from stock_dictionary.preprocess import normalize_term_aliases, write_cleaned_terms
 
 
@@ -31,6 +32,8 @@ def build_final_artifacts(
     if limit is not None:
         terms = terms[:limit]
     terms = _apply_source_conflict_resolutions(terms, samples_dir / "source_conflict_resolution_results.csv")
+    terms = _normalize_and_merge_aliases(terms)
+    terms = _apply_term_augmentation(terms, samples_dir / "term_augmentation_results.csv", data_dir / "term_augmentation_merge_review.csv")
     terms = _normalize_and_merge_aliases(terms)
 
     write_cleaned_terms(data_dir / "cleaned_terms.csv", terms)
@@ -88,6 +91,31 @@ def _apply_source_conflict_resolutions(terms: list[CleanedTerm], path: Path) -> 
             update["source_url"] = resolution["representative_source_url"]
         updated.append(term.model_copy(update=update))
     return updated
+
+
+def _apply_term_augmentation(
+    terms: list[CleanedTerm],
+    path: Path,
+    review_path: Path,
+) -> list[CleanedTerm]:
+    if not path.exists():
+        return terms
+    augmented_terms = _load_cleaned_terms(path)
+    merged, reviews = merge_augmented_terms(terms, augmented_terms)
+    if reviews:
+        _write_review_terms(review_path, reviews)
+    elif review_path.exists():
+        review_path.unlink()
+    return merged
+
+
+def _write_review_terms(path: Path, rows: list[ReviewRequiredTerm]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=["term", "aliases", "category", "reason", "source_name", "source_url", "notes"])
+        writer.writeheader()
+        for row in rows:
+            writer.writerow(row.to_csv_row())
 
 
 def main() -> None:

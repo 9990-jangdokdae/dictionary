@@ -9,6 +9,8 @@ from scripts.run_llm_samples import (
     run_definition_rewrite_samples,
     run_duplicate_alias_samples,
     run_source_conflict_samples,
+    run_term_augmentation_samples,
+    select_existing_samples_by_category,
     write_category_assignment_outputs,
 )
 
@@ -83,6 +85,49 @@ def test_run_definition_rewrite_samples_preserves_order_and_reviews():
     assert results[0].definition == "PER 정제 설명"
     assert [review.term for review in reviews] == ["애매한용어"]
     assert reviews[0].reason == "llm_definition_uncertain"
+
+
+def test_select_existing_samples_by_category_limits_each_category():
+    rows = [
+        _term("PER", "투자지표/밸류에이션"),
+        _term("PBR", "투자지표/밸류에이션"),
+        _term("개인", "수급/투자자"),
+        _term("감자", "공시/기업행위"),
+    ]
+
+    selected = select_existing_samples_by_category(
+        rows,
+        target_categories=["투자지표/밸류에이션", "수급/투자자"],
+        per_category=1,
+    )
+
+    assert [row.term for row in selected] == ["PER", "개인"]
+
+
+def test_run_term_augmentation_samples_validates_raw_results():
+    existing = [_term("PER", "투자지표/밸류에이션")]
+    seeds = [_term("YoY", "리포트/실적 표현")]
+
+    def fake_augmenter(seed_terms, existing_samples, target_categories, max_extra_terms_per_category):
+        assert [term.term for term in seed_terms] == ["YoY"]
+        assert [term.term for term in existing_samples] == ["PER"]
+        assert max_extra_terms_per_category == 5
+        return [
+            _term("YoY", "리포트/실적 표현"),
+            _term("PER", "투자지표/밸류에이션"),
+        ], None
+
+    raw_results, results, reviews = run_term_augmentation_samples(
+        existing,
+        seeds,
+        target_categories=["투자지표/밸류에이션", "리포트/실적 표현"],
+        existing_sample_per_category=1,
+        augmenter=fake_augmenter,
+    )
+
+    assert [row.term for row in raw_results] == ["YoY", "PER"]
+    assert [row.term for row in results] == ["YoY"]
+    assert [review.reason for review in reviews] == ["term_augmentation_duplicate"]
 
 
 def test_write_category_assignment_outputs_removes_misc_from_next_step_results(tmp_path):

@@ -413,11 +413,12 @@ CREATE TABLE stock_terms (
 8. 카테고리 부여
 9. 설명글 형식 통일
 10. 출처 URL 기록
-11. 전처리 및 LLM 보조 정제 결과를 `cleaned_terms.csv`로 저장
-12. 전처리 후 유효 용어 수 확인
-13. 사람 검수 대상 로그 확인
-14. SQLite DB 구축 및 검증
-15. PostgreSQL/Neon용 schema, seed, upload, migration 문서 생성
+11. 뉴스·리포트 핵심 용어 보강
+12. 전처리 및 LLM 보조 정제 결과를 `cleaned_terms.csv`로 저장
+13. 전처리 후 유효 용어 수 확인
+14. 사람 검수 대상 로그 확인
+15. SQLite DB 구축 및 검증
+16. PostgreSQL/Neon용 schema, seed, upload, migration 문서 생성
 
 ### 13.2 LLM 보완 및 정제 프로세스
 
@@ -427,11 +428,43 @@ CREATE TABLE stock_terms (
 4. 중복 용어, 별칭 후보, 카테고리 후보를 LLM으로 보조 판단
 5. 출처 간 정의 충돌이 있는 경우 LLM으로 국내주식 서비스 문맥에 적절한 정의 후보를 도출
 6. LLM으로 설명을 서비스 스타일 가이드에 맞게 정규화
-7. 출처 또는 추출 근거 기록
-8. 사람 검수 대상 로그 확인
-9. SQLite DB 및 Neon 이관 파일에 반영
+7. 수집 출처에는 없지만 주식 입문자 뉴스 큐레이션에 필요한 핵심 용어를 보강
+8. 출처 또는 추출 근거 기록
 
-### 13.3 데이터 수집 파이프라인
+### 13.3 뉴스·리포트 핵심 용어 보강
+
+보강 단계는 기존 LLM 정제 이후, 최종 산출물 생성 직전에 실행한다.
+
+보강 방식은 `data/term_augmentation_seed.csv`의 고정 시드와 LLM 보조 확장을 함께 사용한다. 시드 용어는 사람이 관리하는 필수 보강 후보이며, LLM은 시드의 최종 설명 품질 개선과 추가 후보 제안을 담당한다.
+
+시드 파일 컬럼은 다음과 같다.
+
+```text
+term
+aliases
+category
+definition
+```
+
+LLM 자유 확장은 다음 카테고리로 제한한다.
+
+- `주식 기초`
+- `리포트/실적 표현`
+- `수급/투자자`
+- `투자지표/밸류에이션`
+
+자유 확장 후보는 카테고리별 최대 5개로 제한한다. 검증을 통과한 보강 결과는 최종 산출물에 자동 병합한다. 별도 Human-in-the-loop 단계는 구현하지 않는다.
+
+보강 용어의 최종 출처는 다음 프로젝트 문서 출처로 통일한다.
+
+```text
+source_name: 장독대 주식 용어 사전
+source_url: https://github.com/9990-jangdokdae/dictionary/blob/main/docs/stock_dictionary_prd.md
+```
+
+최종 DB에는 LLM 개입 흔적을 남기지 않는다. 원본 응답, 통과 결과, 검토 대상은 중간 CSV에만 남긴다.
+
+### 13.4 데이터 수집 파이프라인
 
 데이터 수집은 Scrapling 기반 파이프라인으로 구축한다.
 
@@ -475,7 +508,7 @@ source_url
 notes
 ```
 
-### 13.4 LLM 샘플 검증 산출물
+### 13.5 LLM 샘플 검증 산출물
 
 LLM 파이프라인은 비용과 품질을 검증하기 위해 `data/llm_samples/` 아래에 단계별 샘플 산출물을 만들 수 있다.
 
@@ -493,6 +526,9 @@ LLM 파이프라인은 비용과 품질을 검증하기 위해 `data/llm_samples
 | `definition_rewrite_review.csv` | 설명 정제 실패 또는 `uncertain` 항목 | 문제가 없으면 header만 있는 빈 CSV가 정상이다. |
 | `source_conflict_resolution_results.csv` | 복수 출처 정의가 있어 충돌 판단이 필요한 후보만 처리한 결과 | 전체 입력 수가 아니라 충돌 후보 그룹 수와 같다. |
 | `source_conflict_resolution_review.csv` | 출처 충돌 판단 실패 또는 `uncertain` 항목 | 문제가 없으면 header만 있는 빈 CSV가 정상이다. |
+| `term_augmentation_raw.csv` | LLM이 생성한 보강 용어 원본 | 시드와 자유 확장 후보를 포함할 수 있다. |
+| `term_augmentation_results.csv` | 검증을 통과해 최종 병합 가능한 보강 용어 | 최종 산출물 생성 단계에서 자동 병합한다. |
+| `term_augmentation_review.csv` | 보강 용어 생성 실패, 중복, 카테고리 오류, 금지 표현 등 검토 대상 | 문제가 없으면 header만 있는 빈 CSV가 정상이다. |
 
 `duplicate_alias_judgment_results.csv`와 `source_conflict_resolution_results.csv`는 1개 용어마다 반드시 1행을 생성하지 않는다. 두 파일은 후보가 있는 경우에만 행이 생기는 보조 판단 결과다.
 
@@ -502,22 +538,23 @@ Scrapling CLI를 사용할 경우 프롬프트 인젝션 방지를 위해 `--ai-
 
 보호된 페이지, 로그인 영역, 유료 콘텐츠, 개인정보성 데이터는 수집 대상에서 제외한다.
 
-### 13.5 파일 및 디렉터리 구조
+### 13.6 파일 및 디렉터리 구조
 
 파이프라인은 다음 파일 및 디렉터리 구조를 기준으로 구성한다.
 
 ```text
 scripts/
-  scrape_terms.py
-  preprocess_terms.py
-  build_sqlite.py
-  export_postgres.py
+  run_pipeline.py
+  run_llm_samples.py
+  build_final_artifacts.py
 
 data/
   raw_terms.csv
   cleaned_terms.csv
+  term_augmentation_seed.csv
   review_required_terms.csv
   scrape_failures.csv
+  llm_full/
 
 output/
   stock_dictionary.sqlite
@@ -530,7 +567,7 @@ output/
 
 `upload_to_neon.md`, `migration_to_neon.md`는 위 코드 생성 파일 구조에 포함하지 않는다. 두 문서는 최종 데이터 산출물 생성 후 Codex가 직접 작성하여 전달한다.
 
-### 13.6 중간 CSV 컬럼 구조
+### 13.7 중간 CSV 컬럼 구조
 
 `raw_terms.csv`는 수집 원본을 가능한 한 보존하기 위한 중간 파일이다.
 
@@ -553,7 +590,7 @@ output/
 | `source_name` | 대표 출처명 |
 | `source_url` | 대표 출처 URL |
 
-### 13.7 대표 용어 선정 기준
+### 13.8 대표 용어 선정 기준
 
 중복 제거와 별칭 분리 과정에서 대표 용어는 다음 우선순위로 선정한다.
 
@@ -571,7 +608,7 @@ output/
 | `유상 증자`, `유상증자` | `유상증자` | `["유상 증자"]` |
 | `전년 동기 대비`, `YoY`, `Year on Year` | `YoY` | `["전년 동기 대비", "Year on Year"]` |
 
-### 13.8 수집 실패 처리 기준
+### 13.9 수집 실패 처리 기준
 
 수집 파이프라인 작성 단계에서는 각 레퍼런스 수집기가 실패하지 않을 때까지 검증한다.
 
@@ -658,7 +695,7 @@ Neon 이관 절차 문서인 `upload_to_neon.md`, `migration_to_neon.md`는 코�
 
 LLM 프롬프트는 하나의 통합 프롬프트로 구성하지 않고, 작업 목적별로 분리한다.
 
-초기 구축에서는 다음 4개 프롬프트를 사용한다.
+초기 구축에서는 다음 5개 프롬프트를 사용한다.
 
 | 프롬프트 | 목적 |
 |---|---|
@@ -666,6 +703,7 @@ LLM 프롬프트는 하나의 통합 프롬프트로 구성하지 않고, 작업
 | `duplicate_alias_judgment_prompt` | 여러 용어가 같은 개념인지, 별칭으로 묶을 수 있는지, 별도 용어로 남겨야 하는지 판단 |
 | `category_assignment_prompt` | 용어를 초기 고정 카테고리 중 하나로 분류 |
 | `source_conflict_resolution_prompt` | 여러 출처의 정의가 다르거나 강조점이 다를 때 최종 설명 방향과 대표 출처 판단 |
+| `term_augmentation_prompt` | 수집 출처에 없는 뉴스·리포트 핵심 용어를 시드와 제한된 자유 확장으로 보강 |
 
 `quality_review_prompt`는 별도 프롬프트로 두지 않는다. 품질 검토 기준은 각 프롬프트의 판단 기준과 사람 검수 단계에 포함한다.
 
@@ -681,6 +719,7 @@ prompts/
   duplicate_alias_judgment.md
   category_assignment.md
   source_conflict_resolution.md
+  term_augmentation.md
 ```
 
 모든 LLM 프롬프트의 출력은 JSON 형식으로 강제한다. 자유 텍스트 출력은 허용하지 않는다.
@@ -738,6 +777,7 @@ SOURCE_CONFLICT_RESOLUTION_THINKING_LEVEL
 | `duplicate_alias_judgment_prompt` | `medium` | 이름뿐 아니라 정의와 카테고리를 비교해야 한다. |
 | `category_assignment_prompt` | `minimal` | 고정 카테고리 매핑 중심의 낮은 복잡도 작업이다. |
 | `source_conflict_resolution_prompt` | `high` | 출처 간 정의 충돌과 대표 출처 판단의 오류 비용이 가장 크다. |
+| `term_augmentation_prompt` | `medium` | 시드 보강과 제한된 후보 생성을 함께 수행하므로 품질과 범위 통제가 필요하다. |
 
 작업별 `thinking_level`은 `.env`에서 관리하고, 레포에는 `.env.example`로 작성 방향만 제공한다. `.env`는 실행 환경 파일이므로 코드 작업 중 임의로 수정하지 않는다.
 
@@ -973,6 +1013,45 @@ representative_source_id
 
 프롬프트 문안은 대표 출처 선택, 충돌 해결, 불확실성 분리에 필요한 기준만 남기고, 출처 신뢰도 설명을 반복하지 않는다.
 
+### 16.6 `term_augmentation_prompt`
+
+`term_augmentation_prompt`는 수집 출처에 없지만 주식 입문자 뉴스 큐레이션에 필요한 핵심 용어를 보강하는 데 사용한다.
+
+입력은 다음 필드만 사용한다.
+
+```text
+seed_terms:
+  term
+  aliases
+  category
+  definition
+existing_samples:
+  term
+  aliases
+  category
+  definition
+target_categories
+max_extra_terms_per_category
+```
+
+시드 용어는 사람이 관리하는 필수 보강 후보이므로 삭제하지 않는다. LLM은 시드 용어의 표현과 설명을 서비스 문맥에 맞게 다듬을 수 있다.
+
+자유 확장 후보는 `주식 기초`, `리포트/실적 표현`, `수급/투자자`, `투자지표/밸류에이션` 안에서만 제안한다. 카테고리별 자유 확장 후보는 최대 5개다.
+
+별칭은 같은 개념의 약어, 영문명, 한글명만 포함한다. 띄어쓰기만 다른 표현은 별칭이 아니라 검색 정규화 대상으로 본다.
+
+출력은 다음 JSON 필드만 사용한다.
+
+```text
+terms:
+  term
+  aliases
+  category
+  definition
+```
+
+보강 결과는 파이프라인에서 중복, 카테고리, 빈 설명, 투자 권유 표현을 검증한다. 검증을 통과한 항목은 최종 산출물에 자동 병합한다.
+
 ---
 
 ## 17. 카테고리 정책
@@ -1054,7 +1133,7 @@ representative_source_id
 - 기획재정부 시사경제용어사전은 현재 레퍼런스에서 제외한다.
 - YoY, QoQ, YTD 같은 용어는 1차 레퍼런스 수집 이후 LLM 기반 보완 및 정제 단계에서 작성한다.
 - LLM은 미흡한 용어 정의 보완, 중복 판단, 별칭 판단, 카테고리 판단, 출처 충돌 해석, 설명 품질 개선에 활용한다.
-- LLM 프롬프트는 `definition_rewrite_prompt`, `duplicate_alias_judgment_prompt`, `category_assignment_prompt`, `source_conflict_resolution_prompt` 4개로 분리한다.
+- LLM 프롬프트는 `definition_rewrite_prompt`, `duplicate_alias_judgment_prompt`, `category_assignment_prompt`, `source_conflict_resolution_prompt`, `term_augmentation_prompt` 5개로 분리한다.
 - 실제 실행용 프롬프트 문안은 PRD에 포함하지 않고, `prompts/` 디렉터리의 별도 파일로 관리한다.
 - 프롬프트는 구현 단계에서 작성자가 판단 기준을 바탕으로 작성하고, 샘플 데이터로 검증 및 평가를 반복한 뒤 확정한다.
 - `definition_rewrite_prompt`의 입력은 `term`, `aliases`, `category`, `current_definition`만 사용한다.
