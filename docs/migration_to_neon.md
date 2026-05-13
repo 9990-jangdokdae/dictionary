@@ -6,9 +6,9 @@
 
 현재 최종 산출물은 다음 기준을 통과했다.
 
-- `data/cleaned_terms.csv`: 1,436개 데이터 행
+- `data/cleaned_terms.csv`: 1,409개 데이터 행
 - `output/stock_dictionary.sqlite`: 생성 완료
-- SQLite `stock_terms`: 1,436개 행
+- SQLite `stock_terms`: 1,409개 행
 - `aliases` JSON 검증 실패: 0개
 - 최종 포함된 `기타` 카테고리: 0개
 - term 중복: 0개
@@ -50,7 +50,7 @@ SELECT term, COUNT(*) FROM stock_terms GROUP BY term HAVING COUNT(*) > 1;
 
 기대값:
 
-- `COUNT(*)`: 1,436
+- `COUNT(*)`: 1,409
 - JSONB 배열 오류: 0
 - `기타` 카테고리: 0
 - 중복 term: 0

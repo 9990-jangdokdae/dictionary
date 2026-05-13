@@ -73,8 +73,53 @@ def clean_display_term(term: str) -> str:
         text = _clean_text(text[: last.start()] + text[last.end() :])
 
 
+def normalize_term_aliases(term: str, aliases: Iterable[str]) -> tuple[str, list[str]]:
+    base_term, extracted_aliases = _split_parenthetical_aliases(clean_display_term(term))
+    normalized_aliases: list[str] = []
+    for alias in aliases:
+        alias_base, alias_extracted = _split_parenthetical_aliases(clean_display_term(alias))
+        _append_alias(normalized_aliases, base_term, alias_base)
+        for extracted_alias in alias_extracted:
+            _append_alias(normalized_aliases, base_term, extracted_alias)
+    for extracted_alias in extracted_aliases:
+        _append_alias(normalized_aliases, base_term, extracted_alias)
+    return base_term, normalized_aliases
+
+
+def _append_alias(aliases: list[str], term: str, alias: str) -> None:
+    cleaned_alias = _clean_text(alias)
+    if not cleaned_alias:
+        return
+    if normalize_term(cleaned_alias) == normalize_term(term):
+        return
+    if cleaned_alias not in aliases:
+        aliases.append(cleaned_alias)
+
+
+def _split_parenthetical_aliases(term: str) -> tuple[str, list[str]]:
+    aliases: list[str] = []
+    base_term = term
+    while True:
+        matched = False
+
+        def replace(match: re.Match[str]) -> str:
+            nonlocal matched
+            matched = True
+            content = _clean_text(match.group(1))
+            aliases.extend(_split_alias_content(content))
+            return " "
+
+        base_term = _clean_text(re.sub(r"\(([^()]*)\)", replace, base_term))
+        if not matched:
+            return base_term, aliases
+
+
+def _split_alias_content(content: str) -> list[str]:
+    return [_clean_text(part) for part in re.split(r"[,;]", content) if _clean_text(part)]
+
+
 def _alias_key(term: str) -> str:
-    normalized = normalize_term(clean_display_term(term))
+    normalized = normalize_term(normalize_term_aliases(term, [])[0])
     for group in ALIAS_GROUPS:
         if any(normalize_term(item) == normalized for item in group):
             return min(normalize_term(item) for item in group)
@@ -162,6 +207,7 @@ def clean_raw_terms(rows: Iterable[RawTerm]) -> list[CleanedTerm]:
         representative = choose_representative_term(row.term for row in group_rows)
         source = sorted(group_rows, key=lambda row: _source_rank(row.source_name))[0]
         aliases = [row.term for row in group_rows if row.term != representative]
+        representative, aliases = normalize_term_aliases(representative, aliases)
         definition = source.raw_definition
         cleaned.append(
             CleanedTerm(

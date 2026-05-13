@@ -10,6 +10,7 @@ from stock_dictionary.preprocess import (
     clean_raw_terms,
     choose_representative_term,
     normalize_term,
+    normalize_term_aliases,
     write_cleaned_terms,
 )
 
@@ -27,6 +28,48 @@ def test_clean_display_term_removes_duplicate_parenthetical_suffixes():
 def test_choose_representative_term_prefers_common_abbreviation():
     assert choose_representative_term(["주가수익비율", "PER", "P/E Ratio"]) == "PER"
     assert choose_representative_term(["유상 증자", "유상증자"]) == "유상증자"
+
+
+def test_normalize_term_aliases_splits_parenthetical_aliases():
+    term, aliases = normalize_term_aliases("감자 (reduction of capital)", [])
+
+    assert term == "감자"
+    assert aliases == ["reduction of capital"]
+
+
+def test_normalize_term_aliases_keeps_abbreviation_as_representative():
+    term, aliases = normalize_term_aliases("ELS(주가연계증권)", [])
+
+    assert term == "ELS"
+    assert aliases == ["주가연계증권"]
+
+
+def test_normalize_term_aliases_handles_middle_parenthetical_expression():
+    term, aliases = normalize_term_aliases("국제결제은행(BIS) 비율", [])
+
+    assert term == "국제결제은행 비율"
+    assert aliases == ["BIS"]
+
+
+def test_normalize_term_aliases_handles_nested_parenthetical_expression():
+    term, aliases = normalize_term_aliases("장외전자거래시장 (ECN (Electronic Communi-cation Network))", [])
+
+    assert term == "장외전자거래시장"
+    assert aliases == ["Electronic Communi-cation Network", "ECN"]
+
+
+def test_normalize_term_aliases_drops_spacing_only_aliases():
+    term, aliases = normalize_term_aliases("기본적분석", ["기본적 분석", "Fundamental Analysis"])
+
+    assert term == "기본적분석"
+    assert aliases == ["Fundamental Analysis"]
+
+
+def test_normalize_term_aliases_splits_parenthetical_alias_values():
+    term, aliases = normalize_term_aliases("감자", ["감자 (reduction of capital)"])
+
+    assert term == "감자"
+    assert aliases == ["reduction of capital"]
 
 
 def test_assign_category_uses_prd_category_rules():

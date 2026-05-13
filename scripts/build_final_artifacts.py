@@ -9,7 +9,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from stock_dictionary.exporters import build_sqlite, export_postgres_artifacts
 from stock_dictionary.models import CleanedTerm
-from stock_dictionary.preprocess import write_cleaned_terms
+from stock_dictionary.preprocess import normalize_term_aliases, write_cleaned_terms
 
 
 def build_final_artifacts(
@@ -31,6 +31,7 @@ def build_final_artifacts(
     if limit is not None:
         terms = terms[:limit]
     terms = _apply_source_conflict_resolutions(terms, samples_dir / "source_conflict_resolution_results.csv")
+    terms = _normalize_and_merge_aliases(terms)
 
     write_cleaned_terms(data_dir / "cleaned_terms.csv", terms)
     build_sqlite(output_dir / "stock_dictionary.sqlite", terms)
@@ -41,6 +42,27 @@ def build_final_artifacts(
 def _load_cleaned_terms(path: Path) -> list[CleanedTerm]:
     with path.open("r", encoding="utf-8", newline="") as f:
         return [CleanedTerm(**row) for row in csv.DictReader(f)]
+
+
+def _normalize_aliases(term: CleanedTerm) -> CleanedTerm:
+    normalized_term, aliases = normalize_term_aliases(term.term, term.aliases)
+    return term.model_copy(update={"term": normalized_term, "aliases": aliases})
+
+
+def _normalize_and_merge_aliases(terms: list[CleanedTerm]) -> list[CleanedTerm]:
+    merged: dict[str, CleanedTerm] = {}
+    for term in terms:
+        normalized = _normalize_aliases(term)
+        existing = merged.get(normalized.term)
+        if existing is None:
+            merged[normalized.term] = normalized
+            continue
+        aliases = [*existing.aliases]
+        for alias in normalized.aliases:
+            if alias not in aliases:
+                aliases.append(alias)
+        merged[normalized.term] = existing.model_copy(update={"aliases": aliases})
+    return list(merged.values())
 
 
 def _apply_source_conflict_resolutions(terms: list[CleanedTerm], path: Path) -> list[CleanedTerm]:

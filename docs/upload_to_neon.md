@@ -17,8 +17,8 @@
 
 | 항목 | 값 |
 | --- | ---: |
-| `data/cleaned_terms.csv` 데이터 행 | 1,436 |
-| SQLite `stock_terms` 행 | 1,436 |
+| `data/cleaned_terms.csv` 데이터 행 | 1,409 |
+| SQLite `stock_terms` 행 | 1,409 |
 | SQLite `aliases` JSON 검증 실패 | 0 |
 
 ## 1. Neon SQL Editor 열기
@@ -165,7 +165,7 @@ LIMIT 5;
 
 | 항목 | 기대값 |
 | --- | ---: |
-| `COUNT(*)` | 1,436 |
+| `COUNT(*)` | 1,409 |
 | `invalid_aliases` | 0 |
 | `misc_category_count` | 0 |
 | 중복 term 조회 결과 | 0행 |
