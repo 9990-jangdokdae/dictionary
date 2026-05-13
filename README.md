@@ -34,11 +34,22 @@ Neon 반영 절차는 [Neon 업로드 절차 문서](docs/upload_to_neon.md)를 
 flowchart LR
     A["용어 사전 출처"] --> B["raw_terms.csv"]
     B --> C["규칙 기반 전처리"]
-    C --> D["LLM 보조 정제"]
-    D --> H["뉴스 핵심 용어 보강"]
-    H --> E["cleaned_terms.csv"]
+    C --> D["LLM 정제"]
+    D --> E["데이터 조립"]
     E --> F["SQLite 검증"]
     E --> G["PostgreSQL / Neon 산출물"]
+```
+
+LLM 단계는 LangGraph 기반으로 다음 순서로 실행합니다.
+
+```mermaid
+flowchart LR
+    A["카테고리 분류"] --> B["중복·별칭 판단"]
+    B --> C["설명 재작성"]
+    C --> D["출처 충돌 해결"]
+    D --> E["용어 보강"]
+    E --> F["보강 설명 정제"]
+    F --> G["최종 산출물 생성"]
 ```
 
 파이프라인은 세 층으로 나뉩니다.
