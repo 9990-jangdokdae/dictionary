@@ -111,8 +111,9 @@ def _normalize_augmented_term(term: CleanedTerm) -> CleanedTerm:
 def _term_keys(terms: Iterable[CleanedTerm]) -> set[str]:
     keys: set[str] = set()
     for term in terms:
-        keys.add(normalize_term(term.term))
-        keys.update(normalize_term(alias) for alias in term.aliases)
+        normalized_term, aliases = normalize_term_aliases(term.term, term.aliases)
+        keys.add(normalize_term(normalized_term))
+        keys.update(normalize_term(alias) for alias in aliases)
     return keys
 
 

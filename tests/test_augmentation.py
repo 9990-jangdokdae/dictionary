@@ -56,6 +56,16 @@ def test_validate_augmented_terms_rejects_existing_duplicates_and_forbidden_advi
     ]
 
 
+def test_validate_augmented_terms_checks_normalized_existing_parenthetical_aliases():
+    existing = [_term("주당순이익(EPS)", "투자지표/밸류에이션")]
+    candidates = [_term("EPS", "투자지표/밸류에이션")]
+
+    results, reviews = validate_augmented_terms(candidates, existing)
+
+    assert results == []
+    assert [review.reason for review in reviews] == ["term_augmentation_duplicate"]
+
+
 def test_merge_augmented_terms_appends_only_valid_terms():
     base = [_term("PER", "투자지표/밸류에이션")]
     augmented = [_term("YoY"), _term("PER", "투자지표/밸류에이션")]
