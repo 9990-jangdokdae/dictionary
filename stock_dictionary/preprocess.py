@@ -241,7 +241,7 @@ def write_cleaned_terms(path: str | Path, rows: Iterable[CleanedTerm]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     fieldnames = ["term", "aliases", "category", "definition", "source_name", "source_url"]
     with path.open("w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer = csv.DictWriter(f, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         for row in rows:
             writer.writerow(row.to_csv_row())

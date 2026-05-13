@@ -445,6 +445,7 @@ def test_augment_terms_with_llm_returns_cleaned_terms_with_project_source():
     assert terms[0].term == "YoY"
     assert terms[0].aliases == ["Year on Year", "전년 동기 대비"]
     assert terms[0].source_name == "장독대 주식 용어 사전"
+    assert terms[0].source_url == ""
 
 
 def test_term_augmentation_output_rejects_unknown_category():

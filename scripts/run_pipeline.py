@@ -129,7 +129,7 @@ def _load_existing_rows(path: Path) -> list[RawTerm]:
 
 def _write_csv(path: Path, fieldnames: list[str], rows: list[object]) -> None:
     with path.open("w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer = csv.DictWriter(f, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         for row in rows:
             writer.writerow(row.to_csv_row())
@@ -137,7 +137,11 @@ def _write_csv(path: Path, fieldnames: list[str], rows: list[object]) -> None:
 
 def _write_review_log(path: Path, rows: list[object]) -> None:
     with path.open("w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=["term", "aliases", "category", "reason", "source_name", "source_url", "notes"])
+        writer = csv.DictWriter(
+            f,
+            fieldnames=["term", "aliases", "category", "reason", "source_name", "source_url", "notes"],
+            lineterminator="\n",
+        )
         writer.writeheader()
         for row in rows:
             writer.writerow(row.to_csv_row())

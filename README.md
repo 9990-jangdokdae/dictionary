@@ -15,7 +15,7 @@ Neon에는 단일 테이블 `stock_terms`로 용어 사전을 저장합니다. �
 | `category` | 용어 카테고리 |
 | `definition` | 서비스용 설명 |
 | `source_name` | 대표 출처명 |
-| `source_url` | 대표 출처 URL |
+| `source_url` | 대표 출처 URL. 프로젝트 관리 보강 용어는 빈 문자열 |
 
 Neon 반영 절차는 [Neon 업로드 절차 문서](docs/upload_to_neon.md)를 참고합니다.
 
@@ -59,10 +59,12 @@ flowchart LR
 │   ├── preprocess.py              # 정규화, 카테고리 게이트
 │   ├── scrapers.py                # Scrapling 기반 수집기
 │   ├── llm_pipeline.py            # LangChain JSON/Pydantic LLM 작업
+│   ├── graph_pipeline.py          # LangGraph 기반 LLM 단계 오케스트레이션
 │   └── exporters.py               # SQLite, PostgreSQL 산출물 생성
 ├── scripts/
 │   ├── run_pipeline.py            # 규칙 기반/스모크 파이프라인
 │   ├── run_llm_samples.py         # LLM 단계별 실행기
+│   ├── run_langgraph_pipeline.py  # LangGraph 기반 전체/부분 실행기
 │   └── build_final_artifacts.py   # 최종 CSV/SQLite/PostgreSQL 조립
 ├── prompts/                       # 작업별 LLM 프롬프트
 ├── tests/                         # pytest 테스트
@@ -124,6 +126,7 @@ uv sync
 | `DUPLICATE_ALIAS_JUDGMENT_THINKING_LEVEL` | 중복/별칭 판단 단계 추론 수준 |
 | `DEFINITION_REWRITE_THINKING_LEVEL` | 정의 재작성 단계 추론 수준 |
 | `SOURCE_CONFLICT_RESOLUTION_THINKING_LEVEL` | 출처 충돌 해결 단계 추론 수준 |
+| `TERM_AUGMENTATION_THINKING_LEVEL` | 뉴스 핵심 용어 보강 단계 추론 수준 |
 | `LANGSMITH_TRACING` | LangSmith tracing 활성화 여부 |
 | `LANGSMITH_ENDPOINT` | LangSmith API endpoint |
 | `LANGSMITH_API_KEY` | LangSmith API 인증 |
@@ -140,6 +143,18 @@ uv run python scripts/run_pipeline.py --mode existing
 ```
 
 전체 LLM 정제 단계 실행:
+
+```bash
+uv run python scripts/run_langgraph_pipeline.py --mode full --parallelism 100 --data-dir data --samples-dir data/llm_full --output-dir output
+```
+
+이미 생성된 보강 용어만 기존 설명 스타일로 다시 정제하고 최종 산출물까지 갱신:
+
+```bash
+uv run python scripts/run_langgraph_pipeline.py --mode augmented_definition_rewrite_only --parallelism 10 --data-dir data --samples-dir data/llm_full --output-dir output
+```
+
+기존 단계별 CSV 실행기를 직접 사용할 수도 있다.
 
 ```bash
 uv run python scripts/run_llm_samples.py --task category_assignment --parallelism 100 --data-dir data --output-dir data/llm_full

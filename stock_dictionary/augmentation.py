@@ -10,7 +10,7 @@ from stock_dictionary.preprocess import normalize_term, normalize_term_aliases
 
 
 PROJECT_SOURCE_NAME = "장독대 주식 용어 사전"
-PROJECT_SOURCE_URL = "https://github.com/9990-jangdokdae/dictionary/blob/main/docs/stock_dictionary_prd.md"
+PROJECT_SOURCE_URL = ""
 
 AUGMENTATION_TARGET_CATEGORIES = [
     "주식 기초",
@@ -76,7 +76,7 @@ def validate_augmented_terms(
     reviews: list[ReviewRequiredTerm] = []
 
     for candidate in candidates:
-        normalized = _normalize_augmented_term(candidate)
+        normalized = normalize_augmented_term(candidate)
         review_reason = _validation_error(normalized, existing_keys | accepted_keys)
         if review_reason:
             reviews.append(_review(normalized, review_reason))
@@ -96,7 +96,7 @@ def merge_augmented_terms(
     return [*base_terms, *accepted], reviews
 
 
-def _normalize_augmented_term(term: CleanedTerm) -> CleanedTerm:
+def normalize_augmented_term(term: CleanedTerm) -> CleanedTerm:
     normalized_term, aliases = normalize_term_aliases(term.term, term.aliases)
     return term.model_copy(
         update={
@@ -106,6 +106,10 @@ def _normalize_augmented_term(term: CleanedTerm) -> CleanedTerm:
             "source_url": PROJECT_SOURCE_URL,
         }
     )
+
+
+def normalize_augmented_terms(terms: Iterable[CleanedTerm]) -> list[CleanedTerm]:
+    return [normalize_augmented_term(term) for term in terms]
 
 
 def _term_keys(terms: Iterable[CleanedTerm]) -> set[str]:

@@ -59,5 +59,6 @@ SELECT term, COUNT(*) FROM stock_terms GROUP BY term HAVING COUNT(*) > 1;
 
 - 최종 DB에는 LLM 개입 여부, 프롬프트 판단 메모, 검수 메모를 컬럼으로 남기지 않는다.
 - 출처는 최종 설명 작성 기준이 된 대표 `source_name`, `source_url` 1개만 저장한다.
+- 프로젝트 관리 보강 용어는 `source_name`을 `장독대 주식 용어 사전`으로 두고 `source_url`은 빈 문자열로 저장한다.
 - `data/review_required_terms.csv`의 20개 항목은 자동 반영하지 않은 항목이다.
 - 기존 Neon 테이블이 있다면 운영 반영 전 staging 테이블 또는 별도 브랜치에서 먼저 검증한다.

@@ -3,7 +3,6 @@ import json
 
 from stock_dictionary.augmentation import (
     PROJECT_SOURCE_NAME,
-    PROJECT_SOURCE_URL,
     load_term_augmentation_seed,
     merge_augmented_terms,
     validate_augmented_terms,
@@ -36,7 +35,7 @@ def test_load_term_augmentation_seed_uses_project_source_and_json_aliases(tmp_pa
     assert terms[0].term == "YoY"
     assert terms[0].aliases == ["Year on Year", "전년 동기 대비"]
     assert terms[0].source_name == PROJECT_SOURCE_NAME
-    assert terms[0].source_url == PROJECT_SOURCE_URL
+    assert terms[0].source_url == ""
 
 
 def test_validate_augmented_terms_rejects_existing_duplicates_and_forbidden_advice():

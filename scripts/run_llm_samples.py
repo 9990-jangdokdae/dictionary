@@ -319,7 +319,11 @@ def write_review_terms(path: str | Path, rows: list[ReviewRequiredTerm]) -> None
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=["term", "aliases", "category", "reason", "source_name", "source_url", "notes"])
+        writer = csv.DictWriter(
+            f,
+            fieldnames=["term", "aliases", "category", "reason", "source_name", "source_url", "notes"],
+            lineterminator="\n",
+        )
         writer.writeheader()
         for row in rows:
             writer.writerow(row.to_csv_row())
@@ -339,7 +343,11 @@ def write_duplicate_alias_results(path: str | Path, rows: list[dict[str, str]]) 
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=["candidate_terms", "decision", "representative_term", "aliases"])
+        writer = csv.DictWriter(
+            f,
+            fieldnames=["candidate_terms", "decision", "representative_term", "aliases"],
+            lineterminator="\n",
+        )
         writer.writeheader()
         writer.writerows(rows)
 
@@ -359,6 +367,7 @@ def write_source_conflict_results(path: str | Path, rows: list[dict[str, str]]) 
                 "representative_source_url",
                 "source_count",
             ],
+            lineterminator="\n",
         )
         writer.writeheader()
         writer.writerows(rows)

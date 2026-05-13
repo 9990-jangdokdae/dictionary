@@ -53,6 +53,28 @@ def test_cleaned_term_rejects_blank_required_fields():
         )
 
 
+def test_cleaned_and_review_terms_allow_blank_source_url_for_project_managed_terms():
+    term = CleanedTerm(
+        term="YoY",
+        aliases=["Year on Year"],
+        category="리포트/실적 표현",
+        definition="YoY는 전년 같은 기간과 비교한 증감률입니다.",
+        source_name="장독대 주식 용어 사전",
+        source_url="",
+    )
+    review = ReviewRequiredTerm(
+        term="YoY",
+        aliases=[],
+        category="리포트/실적 표현",
+        reason="review",
+        source_name="장독대 주식 용어 사전",
+        source_url="",
+    )
+
+    assert term.to_csv_row()["source_url"] == ""
+    assert review.to_csv_row()["source_url"] == ""
+
+
 def test_raw_review_and_failure_rows_are_csv_serializable():
     raw = RawTerm(
         term="매출",

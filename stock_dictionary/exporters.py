@@ -66,7 +66,7 @@ def export_postgres_artifacts(output_dir: str | Path, terms: Iterable[CleanedTer
 
 def _write_seed_csv(path: Path, rows: list[dict[str, str]]) -> None:
     with path.open("w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=SEED_FIELDS)
+        writer = csv.DictWriter(f, fieldnames=SEED_FIELDS, lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
 

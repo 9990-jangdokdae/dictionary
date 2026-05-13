@@ -132,9 +132,42 @@ def test_build_final_artifacts_merges_term_augmentation_results(tmp_path):
     assert [term.term for term in terms] == ["PER", "YoY"]
     with sqlite3.connect(output_dir / "stock_dictionary.sqlite") as conn:
         count = conn.execute("SELECT COUNT(*) FROM stock_terms").fetchone()[0]
-        yoy = conn.execute("SELECT aliases FROM stock_terms WHERE term = 'YoY'").fetchone()[0]
+        yoy_aliases, yoy_source_url = conn.execute("SELECT aliases, source_url FROM stock_terms WHERE term = 'YoY'").fetchone()
     assert count == 2
-    assert yoy == '["Year on Year", "전년 동기 대비"]'
+    assert yoy_aliases == '["Year on Year", "전년 동기 대비"]'
+    assert yoy_source_url == ""
+
+
+def test_build_final_artifacts_prefers_rewritten_term_augmentation_results(tmp_path):
+    data_dir = tmp_path / "data"
+    output_dir = tmp_path / "output"
+    samples_dir = data_dir / "llm_samples"
+    samples_dir.mkdir(parents=True)
+
+    (samples_dir / "definition_rewrite_results.csv").write_text(
+        "term,aliases,category,definition,source_name,source_url\n"
+        "PER,[],투자지표/밸류에이션,PER 설명,KB증권 금융용어사전,https://example.com/per\n",
+        encoding="utf-8",
+    )
+    (samples_dir / "source_conflict_resolution_results.csv").write_text(
+        "term,decision,recommended_definition,representative_source_id,representative_source_name,representative_source_url,source_count\n",
+        encoding="utf-8",
+    )
+    (samples_dir / "term_augmentation_results.csv").write_text(
+        "term,aliases,category,definition,source_name,source_url\n"
+        "YoY,[],리포트/실적 표현,초안 설명,장독대 주식 용어 사전,\n",
+        encoding="utf-8",
+    )
+    (samples_dir / "term_augmentation_definition_rewrite_results.csv").write_text(
+        "term,aliases,category,definition,source_name,source_url\n"
+        "YoY,[],리포트/실적 표현,재작성 설명,장독대 주식 용어 사전,\n",
+        encoding="utf-8",
+    )
+
+    terms = build_final_artifacts(data_dir=data_dir, output_dir=output_dir, samples_dir=samples_dir)
+
+    yoy = next(term for term in terms if term.term == "YoY")
+    assert yoy.definition == "재작성 설명"
 
 
 def test_build_final_artifacts_writes_augmentation_merge_review_for_invalid_rows(tmp_path):

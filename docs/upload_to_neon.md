@@ -81,6 +81,8 @@ CREATE TABLE stock_terms (
 );
 ```
 
+`source_url`은 `NOT NULL`이지만 프로젝트 관리 보강 용어는 빈 문자열이 들어갈 수 있다. 이는 외부 수집 URL이 없다는 의미이며, LLM 개입 흔적이나 PRD URL을 출처 URL로 대체하지 않는다.
+
 생성 후 테이블 구조를 확인한다.
 
 ```sql

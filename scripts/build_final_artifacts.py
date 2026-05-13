@@ -33,7 +33,7 @@ def build_final_artifacts(
         terms = terms[:limit]
     terms = _apply_source_conflict_resolutions(terms, samples_dir / "source_conflict_resolution_results.csv")
     terms = _normalize_and_merge_aliases(terms)
-    terms = _apply_term_augmentation(terms, samples_dir / "term_augmentation_results.csv", data_dir / "term_augmentation_merge_review.csv")
+    terms = _apply_term_augmentation(terms, _term_augmentation_input_path(samples_dir), data_dir / "term_augmentation_merge_review.csv")
     terms = _normalize_and_merge_aliases(terms)
 
     write_cleaned_terms(data_dir / "cleaned_terms.csv", terms)
@@ -109,10 +109,21 @@ def _apply_term_augmentation(
     return merged
 
 
+def _term_augmentation_input_path(samples_dir: Path) -> Path:
+    rewritten_path = samples_dir / "term_augmentation_definition_rewrite_results.csv"
+    if rewritten_path.exists():
+        return rewritten_path
+    return samples_dir / "term_augmentation_results.csv"
+
+
 def _write_review_terms(path: Path, rows: list[ReviewRequiredTerm]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=["term", "aliases", "category", "reason", "source_name", "source_url", "notes"])
+        writer = csv.DictWriter(
+            f,
+            fieldnames=["term", "aliases", "category", "reason", "source_name", "source_url", "notes"],
+            lineterminator="\n",
+        )
         writer.writeheader()
         for row in rows:
             writer.writerow(row.to_csv_row())

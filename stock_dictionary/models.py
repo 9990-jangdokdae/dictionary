@@ -65,7 +65,7 @@ class CleanedTerm(CsvModel):
     source_name: str
     source_url: str
 
-    _required = field_validator("term", "category", "definition", "source_name", "source_url")(_non_blank)
+    _required = field_validator("term", "category", "definition", "source_name")(_non_blank)
 
     @field_validator("aliases", mode="before")
     @classmethod
@@ -82,7 +82,7 @@ class ReviewRequiredTerm(CsvModel):
     source_url: str
     notes: str = ""
 
-    _required = field_validator("term", "category", "reason", "source_name", "source_url")(_non_blank)
+    _required = field_validator("term", "category", "reason", "source_name")(_non_blank)
 
     @field_validator("aliases", mode="before")
     @classmethod

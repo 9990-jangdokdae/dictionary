@@ -330,7 +330,7 @@ LLM을 활용할 수 있는 작업은 다음과 같다.
 | `category` | 카테고리 |
 | `definition` | 주린이 친화적 설명 |
 | `source_name` | 용어 수집 출처명 |
-| `source_url` | 용어 수집 출처 URL |
+| `source_url` | 용어 수집 출처 URL. 프로젝트 관리 보강 용어는 빈 문자열 허용 |
 | `created_at` | 생성일 |
 | `updated_at` | 수정일 |
 
@@ -356,7 +356,9 @@ SQLite에서는 `TEXT` 컬럼에 JSON 배열 문자열로 저장하고 `json_val
 
 최종 DB에는 대표 출처 1개만 저장한다.
 
-여러 출처를 참고한 경우에도 최종 DB의 `source_name`, `source_url`에는 최종 설명 작성에 가장 기준이 된 대표 출처 1개만 기록한다. 복수 출처 목록, 출처 간 비교 메모, LLM 판단 메모는 필요한 경우 중간 산출물 또는 별도 작업 로그에서만 관리한다.
+여러 출처를 참고한 경우에는 최종 DB의 `source_name`, `source_url`에 최종 설명 작성에 가장 기준이 된 대표 출처 1개만 기록한다. 복수 출처 목록, 출처 간 비교 메모, LLM 판단 메모는 필요한 경우 중간 산출물 또는 별도 작업 로그에서만 관리한다.
+
+수집 출처가 아니라 프로젝트에서 관리하는 보강 용어는 `source_name`을 `장독대 주식 용어 사전`으로 저장하고 `source_url`은 빈 문자열로 둔다. PRD URL이나 LLM 실행 흔적은 최종 DB의 출처 URL로 저장하지 않는다.
 
 대표 출처는 다음 우선순위를 기준으로 선택한다.
 
@@ -455,11 +457,11 @@ LLM 자유 확장은 다음 카테고리로 제한한다.
 
 자유 확장 후보는 카테고리별 최대 5개로 제한한다. 검증을 통과한 보강 결과는 최종 산출물에 자동 병합한다. 별도 Human-in-the-loop 단계는 구현하지 않는다.
 
-보강 용어의 최종 출처는 다음 프로젝트 문서 출처로 통일한다.
+보강 용어의 최종 출처는 프로젝트 관리 출처로 통일한다.
 
 ```text
 source_name: 장독대 주식 용어 사전
-source_url: https://github.com/9990-jangdokdae/dictionary/blob/main/docs/stock_dictionary_prd.md
+source_url: ""
 ```
 
 최종 DB에는 LLM 개입 흔적을 남기지 않는다. 원본 응답, 통과 결과, 검토 대상은 중간 CSV에만 남긴다.
@@ -476,7 +478,7 @@ source_url: https://github.com/9990-jangdokdae/dictionary/blob/main/docs/stock_d
 레퍼런스 사이트
 → Scrapling 수집기
 → raw_terms.csv
-→ 전처리 및 LLM 보조 정제 파이프라인
+→ LangGraph 기반 전처리 및 LLM 보조 정제 파이프라인
 → cleaned_terms.csv
 → stock_dictionary.sqlite
 → schema.postgres.sql / seed_terms.csv / seed_terms.sql / upload_to_neon.md / migration_to_neon.md
@@ -546,6 +548,7 @@ Scrapling CLI를 사용할 경우 프롬프트 인젝션 방지를 위해 `--ai-
 scripts/
   run_pipeline.py
   run_llm_samples.py
+  run_langgraph_pipeline.py
   build_final_artifacts.py
 
 data/
@@ -724,7 +727,7 @@ prompts/
 
 모든 LLM 프롬프트의 출력은 JSON 형식으로 강제한다. 자유 텍스트 출력은 허용하지 않는다.
 
-LLM 파이프라인은 LangChain과 LangGraph를 기반으로 구현한다. JSON 출력 강제와 파싱은 LangChain-Core의 `JsonOutputParser`와 Pydantic 모델을 사용한다.
+LLM 파이프라인은 LangChain과 LangGraph를 기반으로 구현한다. LangGraph는 카테고리 분류, 중복/별칭 판단, 정의 재작성, 출처 충돌 해결, 보강 용어 생성, 보강 용어 정의 재작성, 최종 산출물 생성을 노드로 연결한다. JSON 출력 강제와 파싱은 LangChain-Core의 `JsonOutputParser`와 Pydantic 모델을 사용한다.
 
 LLM 파이프라인 실행 로그와 추적은 LangSmith를 사용한다. LangSmith 관련 설정값은 환경변수로 주입하며, 프롬프트 실행, 모델 응답, 파싱 실패, 재시도, `review_required_terms.csv` 분리 사유를 추적 가능한 형태로 남긴다.
 
@@ -1050,7 +1053,7 @@ terms:
   definition
 ```
 
-보강 결과는 파이프라인에서 중복, 카테고리, 빈 설명, 투자 권유 표현을 검증한다. 검증을 통과한 항목은 최종 산출물에 자동 병합한다.
+보강 결과는 파이프라인에서 중복, 카테고리, 빈 설명, 투자 권유 표현을 검증한다. 검증을 통과한 항목은 `definition_rewrite_prompt`를 한 번 더 거쳐 기존 설명 스타일로 정제한 뒤 최종 산출물에 자동 병합한다.
 
 ---
 
@@ -1119,7 +1122,7 @@ terms:
 - 별칭이 없는 용어의 `aliases`는 항상 `[]`로 저장한다.
 - 최종 DB에는 대표 출처 1개만 저장한다.
 - 초기 카테고리는 고정 목록을 사용하되, 수집된 데이터를 확인한 뒤 재설계할 수 있다.
-- 데이터 수집은 Scrapling 기반 파이프라인으로 구축하고, 전처리 및 LLM 보조 정제 파이프라인을 거쳐 `cleaned_terms.csv`와 SQLite DB를 생성한다.
+- 데이터 수집은 Scrapling 기반 파이프라인으로 구축하고, LangGraph 기반 전처리 및 LLM 보조 정제 파이프라인을 거쳐 `cleaned_terms.csv`와 SQLite DB를 생성한다.
 - LLM 개입 흔적은 최종 DB 컬럼에 남기지 않는다.
 - 사람 검수가 필요한 항목은 `review_required_terms.csv` CSV 로그에 기록한다.
 - 사람 검수는 파이프라인 내 Human-in-the-loop로 구현하지 않고 프로젝트 담당자가 별도로 수동 진행한다.
